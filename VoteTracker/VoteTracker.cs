@@ -16,13 +16,13 @@ namespace VoteTracker
     [ApiVersion(2, 1)]
     public class VoteTracker : TerrariaPlugin
     {
-        private HttpClient _hc = new HttpClient();
-        private BlockingCollection<Request> _requests = new BlockingCollection<Request>();
+        private static HttpClient _hc = new HttpClient();
+        private static BlockingCollection<Request> _requests = new BlockingCollection<Request>();
 
-        private Thread _reqThread;
+        private static Thread _reqThread;
 
-        private string _key;
-        private bool _enabled;
+        private static string _key;
+        private static bool _enabled;
 
         private const string CHECK_URL = "https://terraria-servers.com/api/?object=votes&element=claim&key={{0}}&username={{1}}";
         private const string CLAIM_URL = "https://terraria-servers.com/api/?action=post&object=votes&element=claim&key={{0}}&username={{1}}";
@@ -53,7 +53,7 @@ namespace VoteTracker
             _reqThread.Start();
         }
 
-        private void RequestThread(object unused)
+        private static void RequestThread(object unused)
         {
             while (true) 
             {
@@ -64,7 +64,7 @@ namespace VoteTracker
             }
         }
 
-        private async void HandleRequest(Request request)
+        private static async void HandleRequest(Request request)
         {
             string name = request.Username;
 
@@ -108,9 +108,9 @@ namespace VoteTracker
 
         // -- MANAGE REQUESTS --
 
-        public Request AddRequest(string username, RequestType type) => AddRequest(new Request(username, type));
+        public static Request AddRequest(string username, RequestType type) => AddRequest(new Request(username, type));
 
-        public Request AddRequest(Request request)
+        public static Request AddRequest(Request request)
         {
             if (!_enabled)
             {
@@ -120,7 +120,5 @@ namespace VoteTracker
             _requests.Add(request);
             return request;
         }
-
-
     }
 }
